@@ -4,9 +4,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import static com.mars.laserbridges.Constants.MOD_ID;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
-@EventBusSubscriber
+@EventBusSubscriber(modid = MOD_ID)
 public class DecoyEvents {
     @SubscribeEvent
     public static void onAttack(LivingIncomingDamageEvent event) {
