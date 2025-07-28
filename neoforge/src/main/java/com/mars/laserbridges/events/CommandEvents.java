@@ -9,6 +9,7 @@ import static com.mars.laserbridges.Constants.MOD_ID;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
 @EventBusSubscriber(modid = MOD_ID)
+
 public class CommandEvents {
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event) {
