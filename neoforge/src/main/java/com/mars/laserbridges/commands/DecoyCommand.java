@@ -68,6 +68,7 @@ public class DecoyCommand {
         }
 
         level.addFreshEntity(decoy);
+      
         DECOYS.put(player.getUUID(), decoy);
 
         player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 20 * 30, 0, false, false));
