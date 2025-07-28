@@ -10,8 +10,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.common.util.FakePlayer;
-import net.neoforged.neoforge.common.util.FakePlayerFactory;
+import com.mars.laserbridges.entity.DecoyPlayer;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.HashMap;
@@ -22,7 +21,7 @@ import java.util.UUID;
  * Command for spawning and managing decoy NPCs.
  */
 public class DecoyCommand {
-    private static final Map<UUID, FakePlayer> DECOYS = new HashMap<>();
+    private static final Map<UUID, DecoyPlayer> DECOYS = new HashMap<>();
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("decoy")
@@ -50,7 +49,7 @@ public class DecoyCommand {
         GameProfile profile = new GameProfile(UUID.randomUUID(), source.getName());
         profile.getProperties().putAll(source.getProperties());
 
-        FakePlayer decoy = FakePlayerFactory.get(level, profile);
+        DecoyPlayer decoy = new DecoyPlayer(level, profile);
         decoy.setPos(player.getX(), player.getY(), player.getZ());
         decoy.setYRot(player.getYRot());
         decoy.setXRot(player.getXRot());
@@ -68,20 +67,19 @@ public class DecoyCommand {
         }
 
         level.addFreshEntity(decoy);
-      
         DECOYS.put(player.getUUID(), decoy);
 
         player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 20 * 30, 0, false, false));
     }
 
     private static void setHidden(ServerPlayer player, boolean hide) {
-        FakePlayer decoy = DECOYS.get(player.getUUID());
+        DecoyPlayer decoy = DECOYS.get(player.getUUID());
         if (decoy != null) {
             decoy.setInvisible(hide);
         }
     }
 
-    public static FakePlayer getDecoy(Player player) {
+    public static DecoyPlayer getDecoy(Player player) {
         return DECOYS.get(player.getUUID());
     }
 }
