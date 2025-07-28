@@ -1,56 +1,86 @@
 package com.mars.laserbridges.commands;
 
+import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.common.util.FakePlayer;
+import net.neoforged.neoforge.common.util.FakePlayerFactory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.core.BlockPos;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+/**
+ * Command for spawning and managing decoy NPCs.
+ */
 public class DecoyCommand {
+    private static final Map<UUID, FakePlayer> DECOYS = new HashMap<>();
+
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(
-            Commands.literal("decoy")
-                .requires(cs -> cs.hasPermission(2))
-                .executes(ctx -> {
-                    ServerPlayer player = ctx.getSource().getPlayerOrException();
-                    spawnDecoy(player);
-                    return 1;
-                })
-        );
+        dispatcher.register(Commands.literal("decoy")
+            .requires(cs -> cs.hasPermission(2))
+            .then(Commands.literal("hide").executes(ctx -> {
+                ServerPlayer player = ctx.getSource().getPlayerOrException();
+                setHidden(player, true);
+                return 1;
+            }))
+            .then(Commands.literal("unhide").executes(ctx -> {
+                ServerPlayer player = ctx.getSource().getPlayerOrException();
+                setHidden(player, false);
+                return 1;
+            }))
+            .executes(ctx -> {
+                ServerPlayer player = ctx.getSource().getPlayerOrException();
+                spawnDecoy(player);
+                return 1;
+            }));
     }
 
     private static void spawnDecoy(ServerPlayer player) {
-        ArmorStand stand = new ArmorStand(EntityType.ARMOR_STAND, player.serverLevel());
-        stand.setPos(player.getX(), player.getY(), player.getZ());
-        stand.setYRot(player.getYRot());
-        stand.setXRot(player.getXRot());
-        stand.setCustomName(player.getName());
-        stand.setCustomNameVisible(true);
-        stand.setInvulnerable(true);
-        stand.setNoGravity(true);
-        stand.addTag("laserbridges_decoy");
+        ServerLevel level = player.serverLevel();
+        GameProfile source = player.getGameProfile();
+        GameProfile profile = new GameProfile(UUID.randomUUID(), source.getName());
+        profile.getProperties().putAll(source.getProperties());
 
-        // Copy armor
+        FakePlayer decoy = FakePlayerFactory.get(level, profile);
+        decoy.setPos(player.getX(), player.getY(), player.getZ());
+        decoy.setYRot(player.getYRot());
+        decoy.setXRot(player.getXRot());
+        decoy.addTag("laserbridges_decoy");
+        if (player.isCreative()) {
+            decoy.addTag("laserbridges_no_hurt");
+        }
+
         for (EquipmentSlot slot : EquipmentSlot.values()) {
-            if (slot.isArmor()) {
+            if (slot == EquipmentSlot.HEAD || slot == EquipmentSlot.CHEST || slot == EquipmentSlot.LEGS ||
+                slot == EquipmentSlot.FEET || slot == EquipmentSlot.MAINHAND || slot == EquipmentSlot.OFFHAND) {
                 ItemStack copy = player.getItemBySlot(slot).copy();
-                stand.setItemSlot(slot, copy);
+                decoy.setItemSlot(slot, copy);
             }
         }
-        // Copy helmet or leave empty
-        ItemStack head = player.getItemBySlot(EquipmentSlot.HEAD).copy();
-        stand.setItemSlot(EquipmentSlot.HEAD, head);
 
-        player.serverLevel().addFreshEntity(stand);
+        level.addFreshEntity(decoy);
+        DECOYS.put(player.getUUID(), decoy);
 
-        // make player invisible
         player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 20 * 30, 0, false, false));
+    }
+
+    private static void setHidden(ServerPlayer player, boolean hide) {
+        FakePlayer decoy = DECOYS.get(player.getUUID());
+        if (decoy != null) {
+            decoy.setInvisible(hide);
+        }
+    }
+
+    public static FakePlayer getDecoy(Player player) {
+        return DECOYS.get(player.getUUID());
     }
 }
