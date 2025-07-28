@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "laserbridges:block/legacy_quicksand_inventory"
+  }
+}

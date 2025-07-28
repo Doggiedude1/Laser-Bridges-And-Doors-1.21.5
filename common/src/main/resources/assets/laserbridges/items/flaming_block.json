@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "laserbridges:block/flaming_block_inventory"
+  }
+}

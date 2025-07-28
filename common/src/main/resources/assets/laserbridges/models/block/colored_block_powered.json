@@ -1,0 +1,86 @@
+{
+  "texture_size": [32, 32],
+  "textures": {
+    "0": "laserbridges:block/post_texture",
+    "1": "laserbridges:block/light_texture_powered",
+    "particle": "laserbridges:block/post_texture"
+  },
+  "elements": [
+    {
+      "name": "light",
+      "from": [5, 10, 5],
+      "to": [11, 16, 11],
+      "rotation": {"angle": 0, "axis": "y", "origin": [5, 8, 5]},
+      "faces": {
+        "north": {"uv": [0, 0, 4, 4], "texture": "#1", "tintindex": 0},
+        "east": {"uv": [0, 4, 4, 8], "texture": "#1", "tintindex": 0},
+        "south": {"uv": [4, 0, 8, 4], "texture": "#1", "tintindex": 0},
+        "west": {"uv": [4, 4, 8, 8], "texture": "#1", "tintindex": 0},
+        "up": {"uv": [4, 12, 0, 8], "texture": "#1", "tintindex": 0},
+        "down": {"uv": [12, 0, 8, 4], "texture": "#1", "tintindex": 0}
+      }
+    },
+    {
+      "name": "post",
+      "from": [7, 0, 7],
+      "to": [9, 13, 9],
+      "rotation": {"angle": 0, "axis": "y", "origin": [7, 0, 7]},
+      "faces": {
+        "north": {"uv": [0, 0, 2, 13], "texture": "#0"},
+        "east": {"uv": [2, 0, 4, 13], "texture": "#0"},
+        "south": {"uv": [4, 0, 6, 13], "texture": "#0"},
+        "west": {"uv": [6, 0, 8, 13], "texture": "#0"},
+        "up": {"uv": [10, 2, 8, 0], "texture": "#0"},
+        "down": {"uv": [10, 2, 8, 4], "texture": "#0"}
+      }
+    }
+  ],
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [37, 41, 0],
+      "translation": [-1.25, 4.5, 0],
+      "scale": [0.6, 0.6, 0.6]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [5, 45, 0],
+      "translation": [0, 1.75, 0.25],
+      "scale": [0.75, 0.75, 0.75]
+    },
+    "firstperson_righthand": {
+      "rotation": [39, 0, 0]
+    },
+    "firstperson_lefthand": {
+      "translation": [0, 1.35, 0],
+      "scale": [0.75, 0.75, 0.75]
+    },
+    "ground": {
+      "translation": [0, 2, 0],
+      "scale": [0.5, 0.5, 0.5]
+    },
+    "gui": {
+      "scale": [0.75, 0.75, 0.75]
+    },
+    "head": {
+      "translation": [0, 10, 0]
+    },
+    "fixed": {
+      "scale": [0.75, 0.75, 0.75]
+    }
+  },
+  "groups": [
+    {
+      "name": "light_post",
+      "origin": [8, 8, 8],
+      "color": 0,
+      "children": [
+        0,
+        {
+          "name": "group",
+          "origin": [7, 0, 7],
+          "color": 0,
+          "children": [1]
+        }
+      ]
+    }
+  ]
+}

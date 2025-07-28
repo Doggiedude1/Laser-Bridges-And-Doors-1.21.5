@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "powered=true": {
+      "model": "laserbridges:block/colored_block_powered"
+    },
+    "powered=false": {
+      "model": "laserbridges:block/colored_block"
+    }
+  }
+}
